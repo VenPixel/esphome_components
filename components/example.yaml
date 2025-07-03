@@ -1,0 +1,28 @@
+esphome:
+  name: monk_plant_monitor
+  includes:
+    - components/monk_plant_monitor/monk_plant_monitor.h
+
+external_components:
+  - source: ./components
+    components: [monk_plant_monitor]
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+
+monk_plant_monitor:
+  soil_moisture:
+    name: "Soil Moisture"
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+  temperature:
+    name: "Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+  humidity:
+    name: "Humidity"
+    unit_of_measurement: "%"
+    accuracy_decimals: 1
