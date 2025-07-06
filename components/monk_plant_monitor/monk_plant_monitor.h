@@ -9,7 +9,7 @@ namespace MonkPlantMonitor {
 
 class MonkPlantMonitor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
  public:
-  // void set_soil_sensor(Sensor *s) { soil_sensor = s; }
+  void set_soil_sensor(Sensor *s) { soil_sensor = s; }
   // void set_temp_sensor(Sensor *s) { temp_sensor = s; }
   // void set_humidity_sensor(Sensor *s) { humidity_sensor = s; }
 
@@ -20,6 +20,7 @@ class MonkPlantMonitor : public sensor::Sensor, public PollingComponent, public 
   void dump_config() override;
 
  protected:
+  // float soil_{0};
   // void request_reading(char cmd);
   // float read_float_response();
   // float parse_float(const std::string &text);

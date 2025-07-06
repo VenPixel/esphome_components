@@ -33,6 +33,7 @@ void MonkPlantMonitor::loop() {
 
 void MonkPlantMonitor::dump_config(){
   ESP_LOGCONFIG(TAG, "Monk Plant Monitor");
+  ESP_LOGCONFIG(TAG, "  soil = %i", soil_sensor.state);
 }
 
 // void MonkPlantMonitor::request_reading(char cmd) {
