@@ -16,36 +16,50 @@ CONF_SOIL = "soil_moisture"
 CONF_TEMP = "temperature"
 CONF_HUM = "humidity"
 
-CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(MonkPlantMonitor),
-    cv.Required(CONF_SOIL): sensor.sensor_schema(
+CONFIG_SCHEMA = (
+    sensor.sensor_schema(
+        MonkPlantMonitor,
         unit_of_measurement=UNIT_PERCENT,
         icon=ICON_WATER_PERCENT,
-        accuracy_decimals=0
-    ),
-    cv.Required(CONF_TEMP): sensor.sensor_schema(
-        unit_of_measurement=UNIT_CELSIUS,
-        icon=ICON_THERMOMETER,
-        accuracy_decimals=1,
-        device_class=DEVICE_CLASS_TEMPERATURE
-    ),
-    cv.Required(CONF_HUM): sensor.sensor_schema(
-        unit_of_measurement=UNIT_PERCENT,
-        icon=ICON_WATER,
-        accuracy_decimals=1,
-        device_class=DEVICE_CLASS_HUMIDITY
+        accuracy_decimals=1
     )
-}).extend(cv.polling_component_schema("60s")).extend(uart.UART_DEVICE_SCHEMA)
+    .extend(cv.polling_component_schema("60s"))
+    .extend(uart.UART_DEVICE_SCHEMA)
+)
+
+# CONFIG_SCHEMA = cv.Schema({
+#     cv.GenerateID(): cv.declare_id(MonkPlantMonitor),
+#     cv.Required(CONF_SOIL): sensor.sensor_schema(
+#         unit_of_measurement=UNIT_PERCENT,
+#         icon=ICON_WATER_PERCENT,
+#         accuracy_decimals=0
+#     ),
+#     cv.Required(CONF_TEMP): sensor.sensor_schema(
+#         unit_of_measurement=UNIT_CELSIUS,
+#         icon=ICON_THERMOMETER,
+#         accuracy_decimals=1,
+#         device_class=DEVICE_CLASS_TEMPERATURE
+#     ),
+#     cv.Required(CONF_HUM): sensor.sensor_schema(
+#         unit_of_measurement=UNIT_PERCENT,
+#         icon=ICON_WATER,
+#         accuracy_decimals=1,
+#         device_class=DEVICE_CLASS_HUMIDITY
+#     )
+# }).extend(cv.polling_component_schema("60s")).extend(uart.UART_DEVICE_SCHEMA)
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
+    var = await sensor.new_sensor(config)
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
+    # var = cg.new_Pvariable(config[CONF_ID])
+    # await cg.register_component(var, config)
+    # await uart.register_uart_device(var, config)
 
-    soil = await sensor.new_sensor(config[CONF_SOIL])
-    temp = await sensor.new_sensor(config[CONF_TEMP])
-    hum = await sensor.new_sensor(config[CONF_HUM])
+    # soil = await sensor.new_sensor(config[CONF_SOIL])
+    # temp = await sensor.new_sensor(config[CONF_TEMP])
+    # hum = await sensor.new_sensor(config[CONF_HUM])
 
-    cg.add(var.set_soil_sensor(soil))
-    cg.add(var.set_temp_sensor(temp))
-    cg.add(var.set_humidity_sensor(hum))
+    # cg.add(var.set_soil_sensor(soil))
+    # cg.add(var.set_temp_sensor(temp))
+    # cg.add(var.set_humidity_sensor(hum))
