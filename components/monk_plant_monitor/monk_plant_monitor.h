@@ -14,8 +14,6 @@ class MonkPlantMonitor : public sensor::Sensor, public PollingComponent, public 
   void set_humidity_sensor(Sensor *s) { humidity_sensor = s; }
 
 
-  explicit MonkPlantMonitor(UARTComponent *parent);
-
   void setup() override;
   void update() override;
   void loop() override;

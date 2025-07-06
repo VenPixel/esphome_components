@@ -6,9 +6,6 @@ namespace MonkPlantMonitor {
 
 static const char *TAG = "monk_plant_monitor.sensor";
 
-MonkPlantMonitor::MonkPlantMonitor(UARTComponent *parent)
-    : UARTDevice(parent) {}
-
 void MonkPlantMonitor::setup() {
   // No special setup needed
 }
