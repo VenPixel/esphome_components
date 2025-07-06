@@ -20,6 +20,7 @@ class MonkPlantMonitor : public sensor::Sensor, public PollingComponent, public 
   void dump_config() override;
 
  protected:
+  sensor::Sensor *soil_sensor;
   // float soil_{0};
   // void request_reading(char cmd);
   // float read_float_response();
