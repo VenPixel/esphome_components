@@ -27,11 +27,11 @@ void MonkPlantMonitor::update() {
   // if (!isnan(hum)) humidity_sensor->publish_state(hum);
 }
 
-void EmptyUARTSensor::loop() {
+void MonkPlantMonitor::loop() {
 
 }
 
-void EmptyUARTSensor::dump_config(){
+void MonkPlantMonitor::dump_config(){
   ESP_LOGCONFIG(TAG, "Monk Plant Monitor");
 }
 
