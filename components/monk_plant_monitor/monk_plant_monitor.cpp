@@ -1,6 +1,10 @@
+#include "esphome/core/log.h"
 #include "monk_plant_monitor.h"
 
-using namespace esphome;
+namespace esphome {
+namespace MonkPlantMonitor {
+
+static const char *TAG = "monk_plant_monitor.sensor";
 
 MonkPlantMonitor::MonkPlantMonitor(UARTComponent *parent)
     : UARTDevice(parent) {}
@@ -24,6 +28,14 @@ void MonkPlantMonitor::update() {
   delay(50);
   float hum = read_float_response();
   if (!isnan(hum)) humidity_sensor->publish_state(hum);
+}
+
+void EmptyUARTSensor::loop() {
+
+}
+
+void EmptyUARTSensor::dump_config(){
+  ESP_LOGCONFIG(TAG, "Monk Plant Monitor");
 }
 
 void MonkPlantMonitor::request_reading(char cmd) {
@@ -59,3 +71,6 @@ float MonkPlantMonitor::parse_float(const std::string &text) {
     return NAN;
   }
 }
+
+}  // namespace MonkPlantMonitor
+}  // namespace esphome

@@ -4,7 +4,7 @@ esphome:
     - components/monk_plant_monitor/monk_plant_monitor.h
 
 external_components:
-  - source: ./components
+  - source: github://venpixel/esphome_components
     components: [monk_plant_monitor]
 
 uart:

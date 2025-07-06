@@ -8,7 +8,7 @@ from esphome.const import (
     DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_TEMPERATURE
 )
 
-CODEOWNERS = ["@VenPixel"]
+CODEOWNERS = ["@venpixel"]
 
 monk_ns = cg.esphome_ns.namespace("monk_plant_monitor")
 MonkPlantMonitor = monk_ns.class_("MonkPlantMonitor", cg.PollingComponent, uart.UARTDevice)
