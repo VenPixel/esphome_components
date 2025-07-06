@@ -9,7 +9,7 @@ namespace MonkPlantMonitor {
 
 class MonkPlantMonitor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
  public:
-  void set_soil_sensor(Sensor *s) { soil_sensor = s; }
+  void set_soil_sensor(sensor::Sensor *s) { soil_sensor = s; }
   // void set_temp_sensor(Sensor *s) { temp_sensor = s; }
   // void set_humidity_sensor(Sensor *s) { humidity_sensor = s; }
 
