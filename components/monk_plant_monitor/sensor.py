@@ -9,6 +9,8 @@ from esphome.const import (
 
 CODEOWNERS = ["@venpixel"]
 
+DEPENDENCIES = ["uart"]
+
 monk_ns = cg.esphome_ns.namespace("monk_plant_monitor")
 MonkPlantMonitor = monk_ns.class_("MonkPlantMonitor", cg.PollingComponent, uart.UARTDevice)
 
