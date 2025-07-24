@@ -12,13 +12,13 @@ void MonkPlantMonitor::setup() {
 void MonkPlantMonitor::update() {
   // Try to get all values at once using 'j' command
   request_reading('j');
-  delay(100);
+  ::delay(100);
   
   std::string result;
-  unsigned long start = millis();
+  unsigned long start = ::millis();
   bool success = false;
 
-  while (millis() - start < 1000) {  // 1000ms timeout for all values
+  while (::millis() - start < 1000) {  // 1000ms timeout for all values
     while (available()) {
       char c = read();
       if (c == '\n') {
@@ -30,7 +30,7 @@ void MonkPlantMonitor::update() {
     }
     
     if (success) break;
-    delay(10);
+    ::delay(10);
   }
 
   // If 'j' command failed, fall back to individual requests
@@ -38,17 +38,17 @@ void MonkPlantMonitor::update() {
     ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
     
     request_reading('w');  // Soil moisture
-    delay(50);
+    ::delay(50);
     float soil = read_float_response();
     if (!isnan(soil)) soil_moisture->publish_state(soil);
 
     request_reading('t');  // Temperature
-    delay(50);
+    ::delay(50);
     float temp = read_float_response();
     if (!isnan(temp)) temperature->publish_state(temp);
 
     request_reading('h');  // Humidity
-    delay(50);
+    ::delay(50);
     float hum = read_float_response();
     if (!isnan(hum)) humidity->publish_state(hum);
   }
@@ -60,9 +60,9 @@ void MonkPlantMonitor::request_reading(char cmd) {
 
 float MonkPlantMonitor::read_float_response() {
   std::string result;
-  unsigned long start = millis();
+  unsigned long start = ::millis();
 
-  while (millis() - start < 500) {  // 500ms timeout
+  while (::millis() - start < 500) {  // 500ms timeout
     while (available()) {
       char c = read();
       if (c == '\n') {
@@ -71,7 +71,7 @@ float MonkPlantMonitor::read_float_response() {
         result += c;
       }
     }
-    delay(10);
+    ::delay(10);
   }
 
   ESP_LOGW("MonkPlantMonitor", "Timeout waiting for response");
