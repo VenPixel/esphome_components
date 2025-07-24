@@ -4,9 +4,9 @@
 
 class MonkPlantMonitor : public PollingComponent, public UARTDevice {
  public:
-  void set_soil_sensor(Sensor *s) { soil_sensor = s; }
-  void set_temp_sensor(Sensor *s) { temp_sensor = s; }
-  void set_humidity_sensor(Sensor *s) { humidity_sensor = s; }
+  void set_soil_sensor(Sensor *s) { soil_moisture = s; }
+  void set_temp_sensor(Sensor *s) { temperature = s; }
+  void set_humidity_sensor(Sensor *s) { humidity = s; }
 
 
   explicit MonkPlantMonitor(UARTComponent *parent);
