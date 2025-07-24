@@ -4,6 +4,9 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
 
+namespace esphome {
+namespace monk_plant_monitor {
+
 class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart::UARTDevice {
  public:
   void set_soil_sensor(esphome::sensor::Sensor *s) { soil_moisture = s; }
@@ -25,3 +28,6 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   esphome::sensor::Sensor *temperature{nullptr};
   esphome::sensor::Sensor *humidity{nullptr};
 };
+
+}  // namespace monk_plant_monitor
+}  // namespace esphome

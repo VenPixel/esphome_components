@@ -1,6 +1,7 @@
 #include "monk_plant_monitor.h"
 
-using namespace esphome;
+namespace esphome {
+namespace monk_plant_monitor {
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
     : uart::UARTDevice(parent) {}
@@ -165,3 +166,6 @@ bool MonkPlantMonitor::process_j_response(const std::string &text) {
   
   return found_any;
 }
+
+}  // namespace monk_plant_monitor
+}  // namespace esphome
