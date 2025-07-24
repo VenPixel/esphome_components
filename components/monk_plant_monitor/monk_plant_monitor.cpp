@@ -118,7 +118,7 @@ bool MonkPlantMonitor::process_j_response(const std::string &text) {
     
     float soil = parse_float(w_value_str);
     if (!isnan(soil)) {
-      soil_sensor->publish_state(soil);
+      soil_moisture->publish_state(soil);
       found_any = true;
     }
   }
@@ -138,7 +138,7 @@ bool MonkPlantMonitor::process_j_response(const std::string &text) {
     
     float temp = parse_float(t_value_str);
     if (!isnan(temp)) {
-      temp_sensor->publish_state(temp);
+      temperature->publish_state(temp);
       found_any = true;
     }
   }
@@ -158,7 +158,7 @@ bool MonkPlantMonitor::process_j_response(const std::string &text) {
     
     float hum = parse_float(h_value_str);
     if (!isnan(hum)) {
-      humidity_sensor->publish_state(hum);
+      humidity->publish_state(hum);
       found_any = true;
     }
   }
