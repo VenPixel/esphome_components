@@ -3,8 +3,11 @@
 namespace esphome {
 namespace monk_plant_monitor {
 
+MonkPlantMonitor::MonkPlantMonitor()
+    : PollingComponent(60 * 1000) {} // Default update interval of 60 seconds
+
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
-    : uart::UARTDevice(parent) {}
+    : PollingComponent(60 * 1000), uart::UARTDevice(parent) {}
 
 void MonkPlantMonitor::setup() {
   // No special setup needed

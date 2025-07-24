@@ -14,6 +14,7 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   void set_humidity_sensor(esphome::sensor::Sensor *s) { humidity = s; }
 
 
+  MonkPlantMonitor(); // Default constructor
   explicit MonkPlantMonitor(esphome::uart::UARTComponent *parent);
 
   void setup() override;
