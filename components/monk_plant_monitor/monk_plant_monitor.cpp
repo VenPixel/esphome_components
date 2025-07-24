@@ -2,8 +2,8 @@
 
 using namespace esphome;
 
-MonkPlantMonitor::MonkPlantMonitor(UARTComponent *parent)
-    : UARTDevice(parent) {}
+MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
+    : uart::UARTDevice(parent) {}
 
 void MonkPlantMonitor::setup() {
   // No special setup needed

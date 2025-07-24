@@ -2,15 +2,16 @@
 
 #include "esphome.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/uart/uart.h"
 
-class MonkPlantMonitor : public PollingComponent, public UARTDevice {
+class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart::UARTDevice {
  public:
   void set_soil_sensor(esphome::sensor::Sensor *s) { soil_moisture = s; }
   void set_temp_sensor(esphome::sensor::Sensor *s) { temperature = s; }
   void set_humidity_sensor(esphome::sensor::Sensor *s) { humidity = s; }
 
 
-  explicit MonkPlantMonitor(UARTComponent *parent);
+  explicit MonkPlantMonitor(esphome::uart::UARTComponent *parent);
 
   void setup() override;
   void update() override;
