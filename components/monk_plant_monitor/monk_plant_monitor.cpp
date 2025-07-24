@@ -40,17 +40,17 @@ void MonkPlantMonitor::update() {
     request_reading('w');  // Soil moisture
     delay(50);
     float soil = read_float_response();
-    if (!isnan(soil)) soil_sensor->publish_state(soil);
+    if (!isnan(soil)) soil_moisture->publish_state(soil);
 
     request_reading('t');  // Temperature
     delay(50);
     float temp = read_float_response();
-    if (!isnan(temp)) temp_sensor->publish_state(temp);
+    if (!isnan(temp)) temperature->publish_state(temp);
 
     request_reading('h');  // Humidity
     delay(50);
     float hum = read_float_response();
-    if (!isnan(hum)) humidity_sensor->publish_state(hum);
+    if (!isnan(hum)) humidity->publish_state(hum);
   }
 }
 
