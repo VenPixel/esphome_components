@@ -19,4 +19,7 @@ class MonkPlantMonitor : public PollingComponent, public UARTDevice {
   float read_float_response();
   float parse_float(const std::string &text);
   bool process_j_response(const std::string &text);
+  Sensor soil_moisture;
+  Sensor temperature;
+  Sensor humidity;
 };
