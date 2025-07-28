@@ -10,12 +10,10 @@ MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
     : PollingComponent(60 * 1000), uart::UARTDevice(parent) {}
 
 void MonkPlantMonitor::setup() {
-    ::delay(100); // Required???
-
     // Disable LED on boot up
-    ESP_LOGD("MonkPlantMonitor", "Disabling status LED");
+    ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
     setLed(false);
-    ESP_LOGD("MonkPlantMonitor", "Status LED disabled");
+    ESP_LOGD("MonkPlantMonitor", "MonkPlantMonitor device ready");
 }
 
 void MonkPlantMonitor::setLed(bool enable) {
