@@ -29,6 +29,7 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   esphome::sensor::Sensor *soil_moisture{nullptr};
   esphome::sensor::Sensor *temperature{nullptr};
   esphome::sensor::Sensor *humidity{nullptr};
+  bool uart_initialized_{false}; // Flag to track whether the UART device has been initialized
 };
 
 }  // namespace monk_plant_monitor
