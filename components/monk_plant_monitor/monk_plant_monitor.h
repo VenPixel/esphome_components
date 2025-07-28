@@ -25,7 +25,7 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   float read_float_response();
   float parse_float(const std::string &text);
   bool process_j_response(const std::string &text);
-  void MonkPlantMonitor::setLed(bool enable);
+  void setLed(bool enable);
   esphome::sensor::Sensor *soil_moisture{nullptr};
   esphome::sensor::Sensor *temperature{nullptr};
   esphome::sensor::Sensor *humidity{nullptr};
