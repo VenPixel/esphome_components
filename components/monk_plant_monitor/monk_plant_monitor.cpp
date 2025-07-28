@@ -13,22 +13,26 @@ void MonkPlantMonitor::setup() {
     ::delay(100); // Required???
 
     // Disable LED on boot up
+    ESP_LOGD("MonkPlantMonitor", "Disabling status LED");
     setLed(false);
+    ESP_LOGD("MonkPlantMonitor", "Status LED disabled");
 }
 
 void MonkPlantMonitor::setLed(bool enable) {
     char cmd = 'l';
+    ESP_LOGD("MonkPlantMonitor", "setLED");
     if(enable) {
         cmd = 'L';
-        ESP_LOGW("MonkPlantMonitor", "Enabling LED");
+        ESP_LOGD("MonkPlantMonitor", "Enabling LED");
     } else {
-        ESP_LOGW("MonkPlantMonitor", "Disabling LED");
+        ESP_LOGD("MonkPlantMonitor", "Disabling LED");
     }
     write(cmd);
 }
 
 void MonkPlantMonitor::update() {
   // Try to get all values at once using 'j' command
+  ESP_LOGD("MonkPlantMonitor", "Requesting all values");
   request_reading('j');
   ::delay(100);
   
