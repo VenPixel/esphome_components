@@ -4,15 +4,13 @@ namespace esphome {
 namespace monk_plant_monitor {
 
 MonkPlantMonitor::MonkPlantMonitor()
-    : PollingComponent(60 * 1000) {
+    : PollingComponent(15 * 1000) {
     // Default constructor - UART not initialized yet
     uart_initialized_ = false;
-    // Call setup in constructor to ensure LED is disabled when component is created
-    setup();
-} // Default update interval of 60 seconds
+} // Default update interval of 15 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
-    : PollingComponent(60 * 1000), uart::UARTDevice(parent) {
+    : PollingComponent(15 * 1000), uart::UARTDevice(parent) {
     // UART is initialized in this constructor
     uart_initialized_ = true;
     // Call setup in constructor to ensure LED is disabled when component is created
@@ -21,6 +19,7 @@ MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
 
 void MonkPlantMonitor::setup() {
     // Disable LED on boot up
+    ::delay(100);
     ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
     setLed(false);
     ESP_LOGD("MonkPlantMonitor", "MonkPlantMonitor device ready");
@@ -46,28 +45,28 @@ void MonkPlantMonitor::setLed(bool enable) {
 
 void MonkPlantMonitor::update() {
   // Try to get all values at once using 'j' command
-  ESP_LOGD("MonkPlantMonitor", "Requesting all values");
-  request_reading('j');
-  ::delay(100);
-  
-  std::string result;
-  unsigned long start = ::millis();
-  bool success = false;
-
-  while (::millis() - start < 1000) {  // 1000ms timeout for all values
-    while (available()) {
-      char c = read();
-      if (c == '\n') {
-        success = process_j_response(result);
-        break;
-      } else {
-        result += c;
-      }
-    }
-    
-    if (success) break;
-    ::delay(10);
-  }
+//  ESP_LOGD("MonkPlantMonitor", "Requesting all values");
+//  request_reading('j');
+//  ::delay(100);
+//
+//  std::string result;
+//  unsigned long start = ::millis();
+//  bool success = false;
+//
+//  while (::millis() - start < 1000) {  // 1000ms timeout for all values
+//    while (available()) {
+//      char c = read();
+//      if (c == '\n') {
+//        success = process_j_response(result);
+//        break;
+//      } else {
+//        result += c;
+//      }
+//    }
+//
+//    if (success) break;
+//    ::delay(10);
+//  }
 
   // If 'j' command failed, fall back to individual requests
   if (!success) {
