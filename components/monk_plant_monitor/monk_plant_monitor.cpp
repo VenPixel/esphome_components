@@ -71,17 +71,20 @@ void MonkPlantMonitor::update() {
   // If 'j' command failed, fall back to individual requests
 //  if (!success) {
     ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
-    
+
+    ESP_LOGD("MonkPlantMonitor", "Requesting moisture value");
     request_reading('w');  // Soil moisture
     ::delay(50);
     float soil = read_float_response();
     if (!isnan(soil)) soil_moisture->publish_state(soil);
 
+    ESP_LOGD("MonkPlantMonitor", "Requesting temperature value");
     request_reading('t');  // Temperature
     ::delay(50);
     float temp = read_float_response();
     if (!isnan(temp)) temperature->publish_state(temp);
 
+    ESP_LOGD("MonkPlantMonitor", "Requesting humidity value");
     request_reading('h');  // Humidity
     ::delay(50);
     float hum = read_float_response();
