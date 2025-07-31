@@ -104,6 +104,7 @@ float MonkPlantMonitor::read_float_response() {
     while (available()) {
       char c = read();
       if (c == '\n') {
+        ESP_LOGD("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
         return parse_float(result);
       } else {
         result += c;
