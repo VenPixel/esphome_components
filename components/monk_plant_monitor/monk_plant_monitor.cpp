@@ -70,7 +70,7 @@ void MonkPlantMonitor::update() {
 
   // If 'j' command failed, fall back to individual requests
 //  if (!success) {
-    ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
+//    ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
 
     ESP_LOGD("MonkPlantMonitor", "Requesting moisture value");
     request_reading('w');  // Soil moisture
@@ -104,7 +104,7 @@ float MonkPlantMonitor::read_float_response() {
     while (available()) {
       char c = read();
       if (c == '\n') {
-        ESP_LOGD("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
+        ESP_LOGW("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
         return parse_float(result);
       } else {
         result += c;
