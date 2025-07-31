@@ -4,58 +4,92 @@ namespace esphome {
 namespace monk_plant_monitor {
 
 MonkPlantMonitor::MonkPlantMonitor()
-    : PollingComponent(60 * 1000) {} // Default update interval of 60 seconds
+    : PollingComponent(15 * 1000) {
+    // Default constructor - UART not initialized yet
+    uart_initialized_ = false;
+} // Default update interval of 15 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
-    : PollingComponent(60 * 1000), uart::UARTDevice(parent) {}
+    : PollingComponent(15 * 1000), uart::UARTDevice(parent) {
+    // UART is initialized in this constructor
+    uart_initialized_ = true;
+    // Call setup in constructor to ensure LED is disabled when component is created
+    setup();
+}
 
 void MonkPlantMonitor::setup() {
-  // No special setup needed
+    // Disable LED on boot up
+    ::delay(100);
+    ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
+    setLed(false);
+    ESP_LOGD("MonkPlantMonitor", "MonkPlantMonitor device ready");
+}
+
+void MonkPlantMonitor::setLed(bool enable) {
+    char cmd = 'l';
+    ESP_LOGD("MonkPlantMonitor", "setLED");
+    if(enable) {
+        cmd = 'L';
+        ESP_LOGD("MonkPlantMonitor", "Enabling LED");
+    } else {
+        ESP_LOGD("MonkPlantMonitor", "Disabling LED");
+    }
+    
+    // Only write if the UART device has been initialized
+    if (uart_initialized_) {
+        write(cmd);
+    } else {
+        ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
+    }
 }
 
 void MonkPlantMonitor::update() {
   // Try to get all values at once using 'j' command
-  request_reading('j');
-  ::delay(100);
-  
-  std::string result;
-  unsigned long start = ::millis();
-  bool success = false;
-
-  while (::millis() - start < 1000) {  // 1000ms timeout for all values
-    while (available()) {
-      char c = read();
-      if (c == '\n') {
-        success = process_j_response(result);
-        break;
-      } else {
-        result += c;
-      }
-    }
-    
-    if (success) break;
-    ::delay(10);
-  }
+//  ESP_LOGD("MonkPlantMonitor", "Requesting all values");
+//  request_reading('j');
+//  ::delay(100);
+//
+//  std::string result;
+//  unsigned long start = ::millis();
+//  bool success = false;
+//
+//  while (::millis() - start < 1000) {  // 1000ms timeout for all values
+//    while (available()) {
+//      char c = read();
+//      if (c == '\n') {
+//        success = process_j_response(result);
+//        break;
+//      } else {
+//        result += c;
+//      }
+//    }
+//
+//    if (success) break;
+//    ::delay(10);
+//  }
 
   // If 'j' command failed, fall back to individual requests
-  if (!success) {
+//  if (!success) {
     ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
-    
+
+    ESP_LOGD("MonkPlantMonitor", "Requesting moisture value");
     request_reading('w');  // Soil moisture
     ::delay(50);
     float soil = read_float_response();
     if (!isnan(soil)) soil_moisture->publish_state(soil);
 
+    ESP_LOGD("MonkPlantMonitor", "Requesting temperature value");
     request_reading('t');  // Temperature
     ::delay(50);
     float temp = read_float_response();
     if (!isnan(temp)) temperature->publish_state(temp);
 
+    ESP_LOGD("MonkPlantMonitor", "Requesting humidity value");
     request_reading('h');  // Humidity
     ::delay(50);
     float hum = read_float_response();
     if (!isnan(hum)) humidity->publish_state(hum);
-  }
+//  }
 }
 
 void MonkPlantMonitor::request_reading(char cmd) {
@@ -70,6 +104,7 @@ float MonkPlantMonitor::read_float_response() {
     while (available()) {
       char c = read();
       if (c == '\n') {
+        ESP_LOGD("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
         return parse_float(result);
       } else {
         result += c;
