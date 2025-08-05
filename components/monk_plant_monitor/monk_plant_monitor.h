@@ -31,7 +31,7 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   esphome::sensor::Sensor *temperature{nullptr};
   esphome::sensor::Sensor *humidity{nullptr};
   bool uart_initialized_{false}; // Flag to track whether the UART device has been initialized
-  bool need_disable_led_{false}; // Flag to track whether we need to disable the LED once UART is available
+  bool need_disable_led_{true}; // Flag to track whether we need to disable the LED once UART is available
 };
 
 }  // namespace monk_plant_monitor

@@ -23,12 +23,12 @@ void MonkPlantMonitor::setup() {
     // Disable LED on boot up
     ::delay(100);
     ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
-    if (uart_initialized_) {
+//    if (uart_initialized_) {
         setLed(false);
-    } else {
+//    } else {
         // UART not initialized yet, set flag to disable LED once it's available
-        ESP_LOGD("MonkPlantMonitor", "UART not initialized, will disable LED when available");
-        need_disable_led_ = true;
+//        ESP_LOGD("MonkPlantMonitor", "UART not initialized, will disable LED when available");
+//        need_disable_led_ = true;
     }
     ESP_LOGD("MonkPlantMonitor", "MonkPlantMonitor device ready");
 }
