@@ -3,13 +3,13 @@
 namespace esphome {
 namespace monk_plant_monitor {
 
-MonkPlantMonitor::MonkPlantMonitor()
-    : PollingComponent(60 * 1000) {
-    // Default constructor - UART not initialized yet
-    uart_initialized_ = false;
-    // Call setup in constructor to ensure LED is disabled when component is created
-    setup();
-} // Default update interval of 60 seconds
+//MonkPlantMonitor::MonkPlantMonitor()
+//    : PollingComponent(60 * 1000) {
+//    // Default constructor - UART not initialized yet
+//    uart_initialized_ = false;
+//    // Call setup in constructor to ensure LED is disabled when component is created
+//    setup();
+//} // Default update interval of 60 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
     : PollingComponent(60 * 1000), uart::UARTDevice(parent) {
