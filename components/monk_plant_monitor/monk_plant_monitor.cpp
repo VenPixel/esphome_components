@@ -50,6 +50,7 @@ void MonkPlantMonitor::setLed(bool enable) {
     } else {
         ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
     }
+    ESP_LOGD("MonkPlantMonitor", "LED Set");
 }
 
 void MonkPlantMonitor::update() {
