@@ -55,7 +55,7 @@ void MonkPlantMonitor::setLed(bool enable) {
 
 void MonkPlantMonitor::update() {
   // Check if we need to disable the LED and UART is now initialized
-  if (need_disable_led_ && uart_initialized_) {
+  if (need_disable_led_) {
     ESP_LOGD("MonkPlantMonitor", "UART now initialized, disabling LED");
     setLed(false);
     need_disable_led_ = false;
