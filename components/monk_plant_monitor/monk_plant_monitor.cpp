@@ -60,7 +60,13 @@ void MonkPlantMonitor::update() {
     setLed(false);
     need_disable_led_ = false;
   } else {
-    ESP_LOGD("MonkPlantMonitor", "Still need to disable LED");
+    ESP_LOGW("MonkPlantMonitor", "LED still not disabled");
+    if(!uart_initialized_) {
+        ESP_LOGW("MonkPlantMonitor", "UART still not initialized");
+    }
+    if(need_disable_led_) {
+        ESP_LOGW("MonkPlantMonitor", "Still need to disable LED");
+    }
   }
 
   // Try to get all values at once using 'j' command
