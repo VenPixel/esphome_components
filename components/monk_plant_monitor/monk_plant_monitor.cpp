@@ -8,7 +8,7 @@ MonkPlantMonitor::MonkPlantMonitor()
     // Default constructor - UART not initialized yet
     uart_initialized_ = false;
     // Call setup in constructor to ensure LED is disabled when component is created
-//    setup();
+    setup();
 } // Default update interval of 60 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
@@ -25,7 +25,6 @@ void MonkPlantMonitor::setup() {
     ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
     if (uart_initialized_) {
         setLed(false);
-        need_disable_led_ = false;
     } else {
         // UART not initialized yet, set flag to disable LED once it's available
         ESP_LOGD("MonkPlantMonitor", "UART not initialized, will disable LED when available");
@@ -45,11 +44,12 @@ void MonkPlantMonitor::setLed(bool enable) {
     }
     
     // Only write if the UART device has been initialized
-    if (uart_initialized_) {
+//    if (uart_initialized_) {
         write(cmd);
-    } else {
-        ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
-    }
+//    } else {
+//        ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
+//    }
+    need_disable_led_ = false;
     ESP_LOGD("MonkPlantMonitor", "LED Set");
 }
 
