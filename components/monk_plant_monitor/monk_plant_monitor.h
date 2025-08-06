@@ -24,12 +24,14 @@ class MonkPlantMonitor : public esphome::PollingComponent, public esphome::uart:
   void request_reading(char cmd);
   float read_float_response();
   float parse_float(const std::string &text);
+  int parse_soil_moisture(const std::string &text);
   bool process_j_response(const std::string &text);
   void setLed(bool enable);
   esphome::sensor::Sensor *soil_moisture{nullptr};
   esphome::sensor::Sensor *temperature{nullptr};
   esphome::sensor::Sensor *humidity{nullptr};
   bool uart_initialized_{false}; // Flag to track whether the UART device has been initialized
+  bool need_disable_led_{true}; // Flag to track whether we need to disable the LED once UART is available
 };
 
 }  // namespace monk_plant_monitor

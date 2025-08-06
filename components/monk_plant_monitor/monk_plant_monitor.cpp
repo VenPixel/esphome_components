@@ -4,13 +4,15 @@ namespace esphome {
 namespace monk_plant_monitor {
 
 MonkPlantMonitor::MonkPlantMonitor()
-    : PollingComponent(15 * 1000) {
+    : PollingComponent(60 * 1000) {
     // Default constructor - UART not initialized yet
     uart_initialized_ = false;
-} // Default update interval of 15 seconds
+    // Call setup in constructor to ensure LED is disabled when component is created
+    setup();
+} // Default update interval of 60 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
-    : PollingComponent(15 * 1000), uart::UARTDevice(parent) {
+    : PollingComponent(60 * 1000), uart::UARTDevice(parent) {
     // UART is initialized in this constructor
     uart_initialized_ = true;
     // Call setup in constructor to ensure LED is disabled when component is created
@@ -19,9 +21,15 @@ MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
 
 void MonkPlantMonitor::setup() {
     // Disable LED on boot up
-    ::delay(100);
+//    ::delay(100);
     ESP_LOGD("MonkPlantMonitor", "Setting up MonkPlantMonitor device");
-    setLed(false);
+//    if (uart_initialized_) {
+//        setLed(false);
+//    } else {
+        // UART not initialized yet, set flag to disable LED once it's available
+//        ESP_LOGD("MonkPlantMonitor", "UART not initialized, will disable LED when available");
+//        need_disable_led_ = true;
+//    }
     ESP_LOGD("MonkPlantMonitor", "MonkPlantMonitor device ready");
 }
 
@@ -36,14 +44,31 @@ void MonkPlantMonitor::setLed(bool enable) {
     }
     
     // Only write if the UART device has been initialized
-    if (uart_initialized_) {
+//    if (uart_initialized_) {
         write(cmd);
-    } else {
-        ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
-    }
+//    } else {
+//        ESP_LOGW("MonkPlantMonitor", "UART device not initialized, cannot set LED state");
+//    }
+    need_disable_led_ = false;
+    ESP_LOGD("MonkPlantMonitor", "LED Set");
 }
 
 void MonkPlantMonitor::update() {
+  // Check if we need to disable the LED and UART is now initialized
+  if (need_disable_led_) {
+    ESP_LOGD("MonkPlantMonitor", "[UPDATE] disabling LED");
+    setLed(false);
+    need_disable_led_ = false;
+  } else {
+    ESP_LOGW("MonkPlantMonitor", "LED still not disabled");
+    if(!uart_initialized_) {
+        ESP_LOGW("MonkPlantMonitor", "UART still not initialized");
+    }
+    if(need_disable_led_) {
+        ESP_LOGW("MonkPlantMonitor", "Still need to disable LED");
+    }
+  }
+
   // Try to get all values at once using 'j' command
 //  ESP_LOGD("MonkPlantMonitor", "Requesting all values");
 //  request_reading('j');
@@ -70,13 +95,33 @@ void MonkPlantMonitor::update() {
 
   // If 'j' command failed, fall back to individual requests
 //  if (!success) {
-    ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
+//    ESP_LOGW("MonkPlantMonitor", "Failed to get all values at once, falling back to individual requests");
 
     ESP_LOGD("MonkPlantMonitor", "Requesting moisture value");
     request_reading('w');  // Soil moisture
     ::delay(50);
-    float soil = read_float_response();
-    if (!isnan(soil)) soil_moisture->publish_state(soil);
+    std::string result;
+    unsigned long start = ::millis();
+    
+    while (::millis() - start < 500) {  // 500ms timeout
+      while (available()) {
+        char c = read();
+        if (c == '\n') {
+          ESP_LOGW("MonkPlantMonitor", "Raw soil moisture response: '%s'", result.c_str());
+          int soil = parse_soil_moisture(result);
+          if (soil >= 0) soil_moisture->publish_state(soil);
+          break;
+        } else {
+          result += c;
+        }
+      }
+      if (!result.empty() && result.find('\n') != std::string::npos) break;
+      ::delay(10);
+    }
+    
+    if (result.empty()) {
+      ESP_LOGW("MonkPlantMonitor", "Timeout waiting for soil moisture response");
+    }
 
     ESP_LOGD("MonkPlantMonitor", "Requesting temperature value");
     request_reading('t');  // Temperature
@@ -104,7 +149,7 @@ float MonkPlantMonitor::read_float_response() {
     while (available()) {
       char c = read();
       if (c == '\n') {
-        ESP_LOGD("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
+        ESP_LOGW("MonkPlantMonitor", "Raw response: '%s'", result.c_str());
         return parse_float(result);
       } else {
         result += c;
@@ -133,6 +178,25 @@ float MonkPlantMonitor::parse_float(const std::string &text) {
   return NAN;
 }
 
+int MonkPlantMonitor::parse_soil_moisture(const std::string &text) {
+  int value = -1;  // Default error value
+  // Format is expected to be "w=<value>" (e.g., "w=75")
+  size_t equals_pos = text.find('=');
+  
+  if (equals_pos != std::string::npos && equals_pos + 1 < text.length()) {
+    std::string value_str = text.substr(equals_pos + 1);
+    if (sscanf(value_str.c_str(), "%d", &value) == 1) {
+      // Ensure value is within 0-255 range
+      if (value < 0) value = 0;
+      if (value > 255) value = 255;
+      return value;
+    }
+  }
+  
+  ESP_LOGW("MonkPlantMonitor", "Invalid soil moisture response format: %s", text.c_str());
+  return -1;  // Error value
+}
+
 bool MonkPlantMonitor::process_j_response(const std::string &text) {
   // The 'j' command should return all values in a format like "w=75.5,t=23.4,h=45.6"
   // or possibly as separate lines
@@ -155,8 +219,8 @@ bool MonkPlantMonitor::process_j_response(const std::string &text) {
       w_value_str = remaining.substr(w_pos);
     }
     
-    float soil = parse_float(w_value_str);
-    if (!isnan(soil)) {
+    int soil = parse_soil_moisture(w_value_str);
+    if (soil >= 0) {
       soil_moisture->publish_state(soil);
       found_any = true;
     }
