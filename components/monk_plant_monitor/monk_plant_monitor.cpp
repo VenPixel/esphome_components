@@ -4,15 +4,15 @@ namespace esphome {
 namespace monk_plant_monitor {
 
 MonkPlantMonitor::MonkPlantMonitor()
-    : PollingComponent(60 * 1000) {
+    : PollingComponent(15 * 1000) {
     // Default constructor - UART not initialized yet
     uart_initialized_ = false;
     // Call setup in constructor to ensure LED is disabled when component is created
     setup();
-} // Default update interval of 60 seconds
+} // Default update interval of 15 seconds
 
 MonkPlantMonitor::MonkPlantMonitor(uart::UARTComponent *parent)
-    : PollingComponent(60 * 1000), uart::UARTDevice(parent) {
+    : PollingComponent(15 * 1000), uart::UARTDevice(parent) {
     // UART is initialized in this constructor
     uart_initialized_ = true;
     // Call setup in constructor to ensure LED is disabled when component is created
@@ -99,7 +99,7 @@ void MonkPlantMonitor::update() {
 
     ESP_LOGD("MonkPlantMonitor", "Requesting moisture value");
     request_reading('w');  // Soil moisture
-    ::delay(50);
+    ::delay(20);
     std::string result;
     unsigned long start = ::millis();
     
@@ -125,13 +125,13 @@ void MonkPlantMonitor::update() {
 
     ESP_LOGD("MonkPlantMonitor", "Requesting temperature value");
     request_reading('t');  // Temperature
-    ::delay(50);
+    ::delay(20);
     float temp = read_float_response();
     if (!isnan(temp)) temperature->publish_state(temp);
 
     ESP_LOGD("MonkPlantMonitor", "Requesting humidity value");
     request_reading('h');  // Humidity
-    ::delay(50);
+    ::delay(20);
     float hum = read_float_response();
     if (!isnan(hum)) humidity->publish_state(hum);
 //  }
